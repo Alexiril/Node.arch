@@ -1,0 +1,30 @@
+{
+    "nodesWidget": {
+        "background_color": [0.25, 0.25, 0.25, 1],
+        "texture_color": [1, 1, 1, 1],
+        "texture_multiplier": 1,
+        "texture_source": "Background.png"
+    },
+    "nodeRootPoint": {
+        "line_one_color": [1, 1, 0.8, 0.8],
+        "line_two_color": [0.8, 1, 1, 0.8]
+    },
+    "buttonAddNode": {
+        "base_color": [0.8, 0.8, 0.8, 0.8],
+        "pressed_color": [0.6, 0.6, 0.6, 0.8],
+        "line_one_color": [0.4, 0.4, 0.4, 1],
+        "line_two_color": [0.4, 0.4, 0.4, 1]
+    },
+    "panelAddNode": {
+        "background_color": [0, 0, 0, 0.8],
+        "libs_labels_color": [1, 1, 1, 1],
+        "libs_name_label_color": [1, 1, 1, 1],
+        "libs_description_label_color": [1, 1, 1, 1],
+        "line_between_lib_name_desc_color": [1, 1, 1, 1]
+    },
+    "computedSpriteButton": {
+        "base_color": [0.8, 0.8, 0.8, 0.8],
+        "pressed_color": [0.6, 0.6, 0.6, 0.8],
+        "additional_color": [0.4, 0.4, 0.4, 1]
+    }
+}
