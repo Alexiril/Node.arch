@@ -74,7 +74,7 @@ class PanelAddNode(Widget):
         for x in nodesWidget.nodesLibs:
             label = Label()
             label.size = (self.uiScale * 5, self.uiScale)
-            label.text = f'[ref={x}]{nodesWidget.nodesLibs[x]["UI name"]}[/ref]'
+            label.text = f'[ref={x}]{getattr(nodesWidget.nodesLibs[x], "humanName")}[/ref]'
             # F****ng mistake...
             label.bind(on_ref_press=self.libSelect)  # type: ignore
             label.color = nodesWidget.theme["panelAddNode"]["libs_labels_color"]
@@ -127,8 +127,8 @@ class PanelAddNode(Widget):
                 self.libDescription.opacity = 1
                 self.libDescription.disabled = False
                 self.libName.text = self.libs[self.selectedLib][0].text
-                self.libDescription.text = self.nodesWidget.nodesLibs[self.libs[self.selectedLib][1]].get(
-                    "Description", "")
+                self.libDescription.text = getattr(self.nodesWidget.nodesLibs[self.libs[self.selectedLib][1]], 
+                    "description", "")
                 self.libName.pos = (self.size[0] * 0.7, self.size[1] * 0.5)
                 self.libDescription.pos = (
                     self.size[0] * 0.7, 0)
@@ -143,7 +143,7 @@ class PanelAddNode(Widget):
                     x.disabled = False
 
     def on_touch_down(self, touch):
-        if touch.button == "scrolldown" or touch.button == "scrollup":
+        if (touch.button == "scrolldown" or touch.button == "scrollup") and self.nodesWidget.panelAddNodeShowed:
             delta = 1 if touch.button == "scrolldown" else -1
             if self.state == 0:
                 self.selectedLib = min(

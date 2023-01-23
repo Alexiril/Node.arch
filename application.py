@@ -6,8 +6,8 @@ from kivy.app import App
 from kivy.config import Config
 from kivy.core.window import Window
 
-from backend.core.libs import parseLibs
-from backend.core.errors import ThemeError, LibError, SettingsError
+from backend.core.errors import LibError, SettingsError, ThemeError
+from backend.core.libs import parseLib
 from frontend.nodesWidget import NodesWidget
 
 Config.set('input', 'mouse', 'mouse, disable_multitouch')
@@ -40,28 +40,22 @@ class Application:
 
         try:
             with open(path.join("settings", "global.json"), "r") as settings:
-                self.globalSettings = json.loads(settings.read().replace("\n", ""))
+                self.globalSettings = json.loads(
+                    settings.read().replace("\n", ""))
         except FileNotFoundError:
             SettingsError("The file with global settings was not found.")
             exit(1001)
         except json.JSONDecodeError:
-            SettingsError("The file with global settings probably was corrupted.")
+            SettingsError(
+                "The file with global settings probably was corrupted.")
         except:
-            SettingsError("Unexpected error has occured while working with the global settings file.")
+            SettingsError(
+                "Unexpected error has occured while working with the global settings file.")
 
         self.nodesLibs = dict()
         for lib in scandir(path.join("backend", "libs")):
             if lib.is_dir():
-                try:
-                    with open(path.join(lib, "lib.py"), "r") as libs:
-                        pass
-                        # TODO x002
-                        # Make correct lib parser
-                        # self.nodesLibs = parseLibs(libs.read().replace("\n", ""))
-                except FileNotFoundError:
-                    LibError("Sorry, probably the library is broken, file nodes.py wasn't found.", lib.path)
-                except:
-                    LibError("Unexpected error has occured while working with the library. Check it out.", lib.path)
+                self.nodesLibs[lib.name] = parseLib(lib)
             else:
                 LibError(
                     "Not correct node library folder. Check the file out.", lib.path)
