@@ -50,6 +50,7 @@ class ComputedSpriteButton(Widget):
             if self.click:
                 self.click()
             self.draw()
+            return True
         return super().on_touch_down(touch)
 
     def on_touch_move(self, touch):
@@ -57,6 +58,7 @@ class ComputedSpriteButton(Widget):
             self.state = 3
             self.needToRedraw = True
             self.draw()
+            return True
         return super().on_touch_move(touch)
 
     def on_touch_up(self, touch):
@@ -66,4 +68,5 @@ class ComputedSpriteButton(Widget):
                 self.state = 0
                 self.needToRedraw = True
                 self.draw()
+            return True
         return super().on_touch_up(touch)

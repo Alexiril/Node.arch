@@ -67,9 +67,15 @@ class NodesWidget(Widget):
     color_background: tuple[int, int, int, int]
     color_texture: tuple[int, int, int, int]
     started: bool
+    nodesHolder: Widget
 
     def __init__(self, uiSize: float, nodesLibs: dict, theme: dict, **kwargs):
         super(NodesWidget, self).__init__(**kwargs)
+        self.nodesHolder = Widget()
+        self.nodesHolder.size_hint = (None, None)
+        self.nodesHolder.pos = (0, 0)
+        self.nodesHolder.size = self.size
+        self.add_widget(self.nodesHolder, 0)
         self.theme = theme
         self.color_background = self.theme["nodesWidget"]["background_color"]
         self.color_texture = self.theme["nodesWidget"]["texture_color"]
@@ -96,7 +102,8 @@ class NodesWidget(Widget):
 
     def add_widget(self, widget, index=0, canvas=None):
         result = super().add_widget(widget, index, canvas)
-        widget.post_init()
+        if hasattr(widget, "post_init"):
+            widget.post_init()
         return result
 
     def check_node_id(self, Id: int) -> int:

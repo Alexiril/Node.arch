@@ -24,15 +24,18 @@ class ButtonAddNode(ComputedSpriteButton):
         self.line_two_color = self.parent.theme["buttonAddNode"]["line_two_color"]
         self.baseColor = self.parent.theme["buttonAddNode"]["base_color"]
         self.pressedColor = self.parent.theme["buttonAddNode"]["pressed_color"]
-        self.add_widget(self.panelAddNode)
         self.panelAddNode.post_init(self.parent)
 
     def showAddNodePanel(self) -> None:
+        self.add_widget(self.panelAddNode)
+        self.panelAddNode.state = 0
         self.panelAddNode.opacity = 1
         self.panelAddNode.disabled = False
         self.panelAddNode.selectedLib = 0
+        self.panelAddNode.selectedNode = 0
         self.panelAddNode.size = self.parent.size
-        self.panelAddNode.draw()
+        self.panelAddNode.libSelectActions()
+        self.panelAddNode.update()
         self.parent.panelAddNodeShowed = True
         self.panelIsOpen = True
         self.click = self.hideAddNodePanel
@@ -41,6 +44,9 @@ class ButtonAddNode(ComputedSpriteButton):
         
 
     def hideAddNodePanel(self) -> None:
+        for x in self.panelAddNode.nodesFromLibs:
+            self.panelAddNode.remove_widget(x[0])
+        self.panelAddNode.nodesFromLibs.clear()
         self.panelAddNode.opacity = 0
         self.panelAddNode.disabled = True
         self.parent.panelAddNodeShowed = False
@@ -48,6 +54,8 @@ class ButtonAddNode(ComputedSpriteButton):
         self.click = self.showAddNodePanel
         self.parent.nodeRootPoint.opacity = 1
         self.parent.nodeRootPoint.disabled = False
+        self.remove_widget(self.panelAddNode)
+        self.draw()
 
     def draw(self) -> None:
         self.needToRedraw = False
@@ -55,7 +63,7 @@ class ButtonAddNode(ComputedSpriteButton):
             self.canvas.after.clear()
             if self.panelIsOpen:
                 self.panelAddNode.size = self.parent.size
-                self.panelAddNode.draw()
+                self.panelAddNode.update()
             with self.canvas.after:
                 if self.state == 0:
                     self.getColor(self.baseColor)
