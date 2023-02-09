@@ -1,2 +1,4 @@
-general/*
+1.0/*
 __pycache__
+.vscode/launch.json
+backend/libs/logic/additional/logo.ai

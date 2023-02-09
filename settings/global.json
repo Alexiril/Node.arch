@@ -1,4 +1,5 @@
 {
     "theme file": "theme.json",
-    "ui size": 0.7
+    "ui size": 0.7,
+    "scene moving speed": 1
 }

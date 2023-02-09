@@ -1,21 +1,21 @@
 {
-    "nodesWidget": {
+    "AppBackground": {
         "background_color": [0.25, 0.25, 0.25, 1],
         "texture_color": [1, 1, 1, 1],
         "texture_multiplier": 1,
         "texture_source": "Background.png"
     },
-    "nodeRootPoint": {
+    "AppNodeRootPoint": {
         "line_one_color": [1, 1, 0.8, 0.8],
         "line_two_color": [0.8, 1, 1, 0.8]
     },
-    "buttonAddNode": {
+    "AppAddNodeButton": {
         "base_color": [0.8, 0.8, 0.8, 0.8],
         "pressed_color": [0.6, 0.6, 0.6, 0.8],
         "line_one_color": [0.4, 0.4, 0.4, 1],
         "line_two_color": [0.4, 0.4, 0.4, 1]
     },
-    "panelAddNode": {
+    "AppAddNodePanel": {
         "background_color": [0, 0, 0, 0.8],
         "libs_labels_color": [1, 1, 1, 1],
         "libs_name_label_color": [1, 1, 1, 1],
@@ -23,14 +23,19 @@
         "line_between_lib_name_desc_color": [1, 1, 1, 1],
         "nodes_labels_color": [1, 1, 1, 1]
     },
-    "computedSpriteButton": {
-        "base_color": [0.8, 0.8, 0.8, 0.8],
-        "pressed_color": [0.6, 0.6, 0.6, 0.8],
-        "additional_color": [0.4, 0.4, 0.4, 1]
-    },
-    "graphicalNode": {
+    "AppGNode": {
+        "min_width": 200,
+        "min_height": 100,
+        "header_height": 0.5,
         "standard_body_color": [0.4, 0.4, 0.4, 1],
         "touched_body_color": [0.2, 0.2, 0.2, 1],
-        "selected_node_color": [1, 1, 0, 1]
+        "selected_node_color": [1, 1, 1, 1],
+        "background_color": [0.2, 0.2, 0.2, 1],
+        "hint_text_color": [0.5, 0.5, 0.5, 1],
+        "foreground_color": [0.3, 0.6, 1, 1],
+        "disabled_foreground_color": [0.3, 0.3, 0.3, 1],
+        "selection_color": [1, 0.5, 0.5, 0.35],
+        "cursor_color": [0.3, 0.6, 1, 1],
+        "params_left_right_margin": 0.8
     }
 }

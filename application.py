@@ -1,86 +1,94 @@
-import json
-from os import path, scandir
+from importlib import util
+from json import JSONDecodeError, loads
+from os import DirEntry, path, scandir
 from random import random
+from typing import Any
+from types import ModuleType
 
 from kivy.app import App
 from kivy.config import Config
 from kivy.core.window import Window
+from kivy.metrics import Metrics
 
-from backend.core.errors import LibError, SettingsError, ThemeError
-from backend.core.libs import parseLib
-from frontend.nodesWidget import NodesWidget
-
-Config.set('input', 'mouse', 'mouse, disable_multitouch')
+from backend.errors import LibError, SettingsError, ThemeError
+from frontend.AppState import AppState
+from frontend.app.root import AppRootWidget
 
 
-class Application:
-    """ Main program class. Isn't it obvious?... """
+def parseLib(lib: DirEntry) -> ModuleType | None:
+    modulePath = path.join(lib, "__init__.py")
+    moduleSpec = util.spec_from_file_location(
+        lib.name, modulePath
+    )
+    if moduleSpec is None:
+        LibError(
+            "Not correct module spec. Please, check module path, if it's possible.", lib.path)
+        return
+    module = util.module_from_spec(moduleSpec)
+    if moduleSpec.loader is None:
+        LibError(
+            "Have no idea how that had happen. Sorry. Module spec loader was None. Whaaat?..", lib.path)
+        return
+    moduleSpec.loader.exec_module(module)
+    return module
 
-    class ApplicationGraphics(App):
-        """ Class for application graphics. Why do you even read that?..."""
 
-        nodesWidget: NodesWidget
+class Application(App):
+    appState: AppState
 
-        def __init__(self, uiSize: float, nodesLibs: dict, theme: dict, **kwargs):
-            super().__init__(**kwargs)
-            self.nodesWidget = NodesWidget(uiSize, nodesLibs, theme, **kwargs)
-
-        def build(self):
-            self.title = "Application. I love My Little Pony" if random() > 0.95 else "Application"
-            Window.size = (1280, 720)
-            Window.minimum_width, Window.minimum_height = Window.size
-            return self.nodesWidget
-
-    graphics: ApplicationGraphics
-    nodesLibs: dict[str, dict]
-    globalSettings: dict
-    theme: dict
-
-    def __init__(self) -> None:
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.appState = AppState()
 
         try:
             with open(path.join("settings", "global.json"), "r") as settings:
-                self.globalSettings = json.loads(
+                self.appState.globalSettings = loads(
                     settings.read().replace("\n", ""))
         except FileNotFoundError:
             SettingsError("The file with global settings was not found.")
             exit(1001)
-        except json.JSONDecodeError:
+        except JSONDecodeError:
             SettingsError(
                 "The file with global settings probably was corrupted.")
+            exit(1000)
         except:
             SettingsError(
                 "Unexpected error has occured while working with the global settings file.")
+            exit(999)
 
-        self.nodesLibs = dict()
-        for lib in scandir(path.join("backend", "libs")):
+        for lib in scandir("libs"):
             if lib.is_dir():
-                self.nodesLibs[lib.name] = parseLib(lib)
+                self.appState.nodesLibs[lib.name] = parseLib(lib)
             else:
                 LibError(
                     "Not correct node library folder. Check the file out.", lib.path)
 
         try:
-            with open(path.join("frontend", "themes", self.globalSettings.get("theme file", "theme.json")), "r") as themeFile:
-                self.theme = json.loads(themeFile.read().replace("\n", ""))
+            with open(path.join("themes", self.appState.globalSettings.get("theme file", "theme.json")), "r") as themeFile:
+                self.appState.theme = loads(themeFile.read().replace("\n", ""))
         except FileNotFoundError:
             ThemeError("Please, check the name of the theme. The file wasn't found.",
-                       self.globalSettings["theme file"])
+                       self.appState.globalSettings.get("theme file", "theme.json"))
             exit(998)
-        except json.JSONDecodeError:
+        except JSONDecodeError:
             ThemeError("Sorry, the theme file is not correct.",
-                       self.globalSettings["theme file"])
+                       self.appState.globalSettings.get("theme file", "theme.json"))
             exit(997)
         except:
             ThemeError("Sorry, unexpected behavior has happened while working with the theme file",
-                       self.globalSettings["theme file"])
+                       self.appState.globalSettings.get("theme file", "theme.json"))
             exit(996)
 
-        self.graphics = self.ApplicationGraphics(
-            self.globalSettings.get("ui size", 0.7), self.nodesLibs, self.theme)
+        self.appState.uiScale = Metrics.dpi * \
+            self.appState.globalSettings.get("ui size", 0.7)
 
-        self.graphics.run()
+    def build(self):
+        self.title = "Application. I love My Little Pony" if random() > 0.95 else "Application"
+        Window.size = (1280, 720)
+        Window.minimum_width, Window.minimum_height = Window.size
+        return AppRootWidget(self.appState)
 
 
 if __name__ == "__main__":
-    Application()
+    Config.set('input', 'mouse', 'mouse, disable_multitouch')
+    Application().run()
